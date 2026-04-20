@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>МУИС – МТЭС – МКУТ – КУ Магадлан Итгэмжлэл</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mongolian&family=Inter:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sidebar-bg: #1a1f2e;
+    --sidebar-hover: #252c40;
+    --sidebar-active: #2d3650;
+    --sidebar-border: #2a3045;
+    --accent: #4a7cf7;
+    --accent-light: #5b8bf8;
+    --text-main: #1a1a2e;
+    --text-muted: #6b7280;
+    --text-light: #9ca3af;
+    --bg-main: #f8f9fc;
+    --bg-card: #ffffff;
+    --border: #e5e7eb;
+    --explanation-bg: #f0f4ff;
+    --explanation-border: #c7d7fd;
+    --tag-bg: #eff6ff;
+    --tag-color: #1d4ed8;
+    --file-bg: #f9fafb;
+    --file-border: #e5e7eb;
+    --sidebar-width: 280px;
+  }
+
+  html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; background: var(--bg-main); }
+
+  /* ── LAYOUT ── */
+  #app { display: flex; height: 100vh; overflow: hidden; }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #sidebar-header {
+    padding: 20px 18px 16px;
+    border-bottom: 1px solid var(--sidebar-border);
+    flex-shrink: 0;
+  }
+
+  #sidebar-header h1 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    margin-bottom: 6px;
+  }
+
+  #sidebar-header p {
+    font-size: 11px;
+    color: #6b7a9f;
+    line-height: 1.4;
+  }
+
+  #sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #2d3650 transparent;
+  }
+
+  #sidebar-nav::-webkit-scrollbar { width: 4px; }
+  #sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+  #sidebar-nav::-webkit-scrollbar-thumb { background: #2d3650; border-radius: 2px; }
+
+  .nav-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .nav-item:hover { background: var(--sidebar-hover); }
+
+  .nav-item.active {
+    background: var(--sidebar-active);
+    border-left-color: var(--accent);
+  }
+
+  .nav-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #252c40;
+    color: #8899cc;
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .nav-item.active .nav-num {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .nav-label {
+    font-size: 11.5px;
+    color: #a0aec0;
+    line-height: 1.45;
+    font-weight: 400;
+    transition: color 0.15s;
+  }
+
+  .nav-item.active .nav-label,
+  .nav-item:hover .nav-label { color: #e2e8f0; }
+
+  /* ── MAIN ── */
+  #main {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--bg-main);
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+
+  #main::-webkit-scrollbar { width: 6px; }
+  #main::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+  .content-section { display: none; padding: 36px 40px 48px; max-width: 900px; }
+  .content-section.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--tag-color);
+    background: var(--tag-bg);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+
+  /* ── EXPLANATION BLOCK ── */
+  .explanation-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tag-color);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    margin-top: 24px;
+  }
+
+  .explanation-block {
+    background: var(--explanation-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 18px 20px;
+    margin-bottom: 8px;
+  }
+
+  .explanation-block p {
+    font-size: 13.5px;
+    color: #374151;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .explanation-block p:last-child { margin-bottom: 0; }
+
+  .explanation-block strong { color: #1a1a2e; font-weight: 600; }
+
+  /* ── FILE LIST ── */
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--file-border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    cursor: pointer;
+  }
+
+  .file-item:hover {
+    border-color: var(--accent);
+    background: #f5f8ff;
+    box-shadow: 0 2px 8px rgba(74, 124, 247, 0.08);
+  }
+
+  .file-icon {
+    width: 36px;
+    height: 36px;
+    background: #eef2ff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .file-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--accent);
+  }
+
+  .file-info { flex: 1; min-width: 0; }
+
+  .file-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1a1a2e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .file-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .file-download {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: var(--explanation-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+    font-size: 16px;
+    transition: background 0.15s;
+  }
+
+  .file-item:hover .file-download { background: #dbeafe; }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  /* ── IMAGE ── */
+  .content-section img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 16px 0;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── SIDEBAR ── -->
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>МУИС – МТЭС – МКУТ – КУ МАГАДЛАН ИТГЭМЖЛЭЛ</h1>
+    <p>Шалгуур 3. Сургалтын үйл ажиллагаа: тодруулах асуулууд</p>
+  </div>
+  <nav id="sidebar-nav">
+    <div class="nav-item active" onclick="showSection(1, this)">
+      <span class="nav-num">1</span>
+      <span class="nav-label">Элсэлтийн бодлогын дүн шинжилгээ</span>
+    </div>
+    <div class="nav-item" onclick="showSection(2, this)">
+      <span class="nav-num">2</span>
+      <span class="nav-label">Элсэлтийн бодлогын хурлын протокол</span>
+    </div>
+    <div class="nav-item" onclick="showSection(3, this)">
+      <span class="nav-num">3</span>
+      <span class="nav-label">Оюутны хөгжлийн хөтөлбөр, санхүүжилт</span>
+    </div>
+    <div class="nav-item" onclick="showSection(4, this)">
+      <span class="nav-num">4</span>
+      <span class="nav-label">Оюутны хөдөлмөр эрхлэлт, зуучлал</span>
+    </div>
+    <div class="nav-item" onclick="showSection(5, this)">
+      <span class="nav-num">5</span>
+      <span class="nav-label">Оюутны эрдэм шинжилгээний ажлын санхүүжилт</span>
+    </div>
+    <div class="nav-item" onclick="showSection(6, this)">
+      <span class="nav-num">6</span>
+      <span class="nav-label">Зээл, тэтгэлэг олголтын дүн шинжилгээ</span>
+    </div>
+    <div class="nav-item" onclick="showSection(7, this)">
+      <span class="nav-num">7</span>
+      <span class="nav-label">Багц цагийн дүйцүүлэлт, хэрэгжилтийн тайлан</span>
+    </div>
+    <div class="nav-item" onclick="showSection(8, this)">
+      <span class="nav-num">8</span>
+      <span class="nav-label">Шилжилт хөдөлгөөн</span>
+    </div>
+    <div class="nav-item" onclick="showSection(9, this)">
+      <span class="nav-num">9</span>
+      <span class="nav-label">Төгсөлтийн тушаал</span>
+    </div>
+    <div class="nav-item" onclick="showSection(10, this)">
+      <span class="nav-num">10</span>
+      <span class="nav-label">Төгсөлтийн баримт бичгийн журам, заавар</span>
+    </div>
+    <div class="nav-item" onclick="showSection(11, this)">
+      <span class="nav-num">11</span>
+      <span class="nav-label">Төгсөлтийн баримт бичгийг нөхөн олгох</span>
+    </div>
+    <div class="nav-item" onclick="showSection(12, this)">
+      <span class="nav-num">12</span>
+      <span class="nav-label">Төгсөлтийн баримт бичгийн стандарт</span>
+    </div>
+    <div class="nav-item" onclick="showSection(13, this)">
+      <span class="nav-num">13</span>
+      <span class="nav-label">Hemis, E-Mongolia, Blockchain-нд байрлуулсан дүрэм журам</span>
+    </div>
+    <div class="nav-item" onclick="showSection(14, this)">
+      <span class="nav-num">14</span>
+      <span class="nav-label">Хамтын ажиллагааны гэрээ, санамж бичиг</span>
+    </div>
+    <div class="nav-item" onclick="showSection(15, this)">
+      <span class="nav-num">15</span>
+      <span class="nav-label">Хамтын ажиллагааны гэрээ, санамж бичгийн хүрээнд хийсэн ажил</span>
+    </div>
+    <div class="nav-item" onclick="showSection(16, this)">
+      <span class="nav-num">16</span>
+      <span class="nav-label">Хамтын ажиллагааны гэрээ сунгасан болон хаасан шийдвэрийн тушаал</span>
+    </div>
+    <div class="nav-item" onclick="showSection(17, this)">
+      <span class="nav-num">17</span>
+      <span class="nav-label">Багш болон оюутан солилцох журам</span>
+    </div>
+    <div class="nav-item" onclick="showSection(18, this)">
+      <span class="nav-num">18</span>
+      <span class="nav-label">Төгсөгчдийн холбооны үйл ажиллагаа</span>
+    </div>
+  </nav>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="main">
+
+  <!-- Section 1 -->
+  <div class="content-section active" id="section-1">
+    <div class="section-tag">Тодруулах Асуулт 1</div>
+    <h2 class="section-title">Элсэлтийн бодлогын дүн шинжилгээ хийсэн тайлан ба төлөвлөгөөтэй (сүүлийн 3 жилээр) танилцах</h2>
+    <p class="section-subtitle">Элсэлтийн бодлогын дүн шинжилгээ</p>
+
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>Компьютерын ухааны хөтөлбөрийн элсэлтийн бодлого нь суралцагчдын чанар болон тоог тогтвортой нэмэгдүүлэх, шилдэг элсэгчдийг татахад чиглэдэг.</p>
+      <p><strong>Элсэлтийн чанар, хүртээмжийн үзүүлэлт (Сүүлийн 5 жил):</strong></p>
+      <p>Хөтөлбөрийн элсэлтийн босго оноо болон элсэгчдийн ЭЭШ-ын дундаж оноо тогтмол өсөлттэй байгаа нь хөтөлбөрийн нэр хүнд, чанарыг илтгэж байна. 2023-2024 хичээлийн жилд ЭЭШ-ын дундаж оноо <strong>725</strong>-д хүрсэн нь улсын дунджаас эрс өндөр үзүүлэлт юм.</p>
+      <p><strong>2025-2026 хичээлийн жилийн сурталчилгаа (Outreach):</strong></p>
+      <p>Одоогийн (2025-2026) элсэлтийн бэлтгэл ажлын хүрээнд олон нийтэд зориулсан видео контент, сошиал медиа сурталчилгааны үр дүнд <strong>507,623</strong> хандалт авсан байна.</p>
+      <p><strong>Элсэгчдэд зөвлөгөө өгөх баг:</strong></p>
+      <p>Элсэгчдэд зөвлөгөө өгөх баг ажилладаг ба 2025 - 2026 оны элсэлтийн үед дараах бүрэлдэхүүн КУ элсэгчдэд зөвлөгөө өгөх зорилгоор холбогдох мэдээллийг нээлттэй веб болон сошиал медиа сувгуудаар дамжуулан хүргэж ажилласан:<br>
+        - Ч. Алтангэрэл (Тэнхим эрхлэгч): +976-88006336<br>
+        - П. Далайжаргал (Чиглүүлэгч багш): +976-88005204<br>
+        - Имэйл: dalaijargal@num.edu.mn
+      </p>
+      <p>Хөтөлбөрийн чанар, элсэлтийн бодлогын хэрэгжилтийг үнэлэх зорилгоор хийгдсэн нарийвчилсан судалгаа, тайлангуудыг сургуулийн холбогдох нэгж, удирдлагуудаас албан ёсоор гаргуулахаар хүсэлт хүргүүлэн ажиллаж байна.</p>
+    </div>
+
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg>
+        </div>
+        <div class="file-info">
+          <div class="file-name">Шалгуур 3 formatted.docx</div>
+          <div class="file-meta">DOCX • Татах боломжтой</div>
+        </div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg>
+        </div>
+        <div class="file-info">
+          <div class="file-name">Enrollment_data.pdf</div>
+          <div class="file-meta">PDF • Татах боломжтой</div>
+        </div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="content-section" id="section-2">
+    <div class="section-tag">Тодруулах Асуулт 2</div>
+    <h2 class="section-title">Элсэлтийн тоон болон чанарын судалгааг удирдлага, хамт олны хурлаар хэлэлцүүлсэн хурлын протокол, шинэчилсэн бодлогын баримт бичгүүдтэй танилцах</h2>
+    <p class="section-subtitle">Элсэлтийн бодлогын хурлын протокол</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>Элсэлтийн бодлого, төлөвлөлтийг МУИС-ийн ерөнхий журам болон МТЭС-ийн стратеги төлөвлөгөөний дагуу боловсруулдаг. Уг бодлого, түүний хэрэгжилт, дүн шинжилгээг Мэдээллийн технологийн тэнхимийн хурал болон Хөтөлбөрийн хорооны хурлаар тогтмол хэлэлцүүлж, шийдвэрлэдэг.</p>
+      <p>Компьютерын ухааны (КУ) хөтөлбөрийн элсэлт сүүлийн жилүүдэд 98-100 хувийн биелэлттэй байгаа төдийгүй ЭЕШ-ын оноогоороо үндэсний хэмжээнд тэргүүлэх түвшний суралцагчдыг тогтвортой элсүүлж байна.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="content-section" id="section-3">
+    <div class="section-tag">Тодруулах Асуулт 3</div>
+    <h2 class="section-title">Оюутны хөгжлийн хөтөлбөр, төлөвлөгөөний санхүүжилтийн тайлантай танилцах? Хөтөлбөрт хамрагдсан оюутны судалгаатай танилцах</h2>
+    <p class="section-subtitle">Оюутны хөгжлийн хөтөлбөр, санхүүжилт</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС-ийн Оюутан хөгжлийн төв нь тогтмол үйл ажиллагаа явуулж байгаа бөгөөд тус албанаас хэрэгжүүлсэн ажлын тайланг доор хавсаргав.</p>
+      <p>Мөн МТЭС-ийн дэргэдэх Оюутны зөвлөлөөс үйл ажиллагааны тайлан болон санхүүгийн тайланг давхар ирүүлэх хүсэлтийг хүргүүлсэн болно.</p>
+      <p>МКУТ нь оюутны шинийг санаачлах, багаар ажиллах чадварыг сайжруулахын тулд тэнхимийн оюутнуудын дунд жил бүр бүтээлийн уралдааныг зохион байгуулдаг. Уг уралдаанд амжилттай оролцож байр эзэлсэн оюутнуудад <strong>300,000₮–1,000,000₮</strong> хүртэлх сургалтын төлбөрийн тэтгэлэг олгодог.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="content-section" id="section-4">
+    <div class="section-tag">Тодруулах Асуулт 4</div>
+    <h2 class="section-title">Оюутныг мэргэжлийн чиглэлийн үйл ажиллагаа эрхэлдэг байгууллагуудад цагийн болон үндсэн ажилд зуучлан ажиллуулж байсан эсэх, хэрэв тийм бол гэрээт байгууллагуудтай байгуулсан гэрээ болон ажилласан оюутны судалгаатай танилцах</h2>
+    <p class="section-subtitle">Оюутны хөдөлмөр эрхлэлт, зуучлал</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>Үйлдвэрлэлийн дадлагын хувьд оюутан, багш нар хамтран 3 долоо хоногийн хугацаатай дадлагын хөтөлбөрт хамрагдах байгууллагуудыг сонгон тодорхойлдог. Дадлагад хамрагдаж буй оюутан бүрийн хувьд сургууль, байгууллага, оюутны хооронд гурван талт гэрээ байгуулж, дадлагын явцыг албан ёсоор баталгаажуулдаг.</p>
+      <p>Мөн дадлага дууссаны дараа оюутан бүр хийж гүйцэтгэсэн ажил болон эзэмшсэн мэдлэг, ур чадвараа багш нарын бүрэлдэхүүнтэй комиссын өмнө тайлагнаж хамгаалдаг.</p>
+      <p>Түүнчлэн Оюутан хөгжлийн төвөөс оюутнуудыг ажлын байранд зуучлах, байгууллагуудтай хамтын ажиллагааны гэрээ байгуулах үйл ажиллагааг тогтмол хэрэгжүүлдэг.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 5 -->
+  <div class="content-section" id="section-5">
+    <div class="section-tag">Тодруулах Асуулт 5</div>
+    <h2 class="section-title">Оюутны эрдэм шинжилгээний ажлын санхүүжилтийн тайлан, санхүүжилт авсан оюутны бүтээлийн жагсаалттай танилцах</h2>
+    <p class="section-subtitle">Оюутны эрдэм шинжилгээний ажлын санхүүжилт</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>Оюутны эрдэм шинжилгээний хурал болон Бүтээлийн уралдаанд оролцсон оюутнуудыг дэмжих хүрээнд санхүүжилтийн тогтолцоог хэрэгжүүлж байна.</p>
+      <p>Тухайлбал, амжилттай оролцож байр эзэлсэн оюутнууд сургалтын төлбөрийн тэтгэлэг авах, төгсөх курсийн оюутнуудын хувьд мөнгөн урамшуулал хэлбэрээр санхүүжилт авах боломж бүрдсэн.</p>
+      <p>Эдгээр санхүүжилтийг хэрэгжүүлэхтэй холбоотой тушаал, шийдвэрүүдийн жишээ материал хавсаргав.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 6 -->
+  <div class="content-section" id="section-6">
+    <div class="section-tag">Тодруулах Асуулт 6</div>
+    <h2 class="section-title">Олгосон зээл, тэтгэлэг, хэрэгжилтийн шийдвэр хийсэн дүн шинжилгээний тайлантай танилцах</h2>
+    <p class="section-subtitle">Зээл, тэтгэлэг олголтын дүн шинжилгээ</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>Компьютерийн ухааны хөтөлбөрийн оюутнуудад олгосон төрөл бүрийн тэтгэлэг, буцалтгүй тусламжийн хэрэгжилтэд 2021–2025 оны хооронд хийсэн дүн шинжилгээ болно.</p>
+      <p>Тайланд нийт <strong>278</strong> оюутны мэдээллийг хамруулсан бөгөөд үүнд нийгмийн зорилтот бүлгийн дэмжлэг болон салбарын мэргэжилтнүүдийн залгамж халааг бэлтгэх бодлогын хүрээнд олгосон төлбөрийн хөнгөлөлтүүдийг нарийвчлан тусгасан болно.</p>
+      <p>Дэлгэрэнгүй тайланг "Нотолгоо" хэсэгт байршуулсан.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 7 -->
+  <div class="content-section" id="section-7">
+    <div class="section-tag">Тодруулах Асуулт 7</div>
+    <h2 class="section-title">Багц цагийн дүйцүүлэлт, хэрэгжилтийн тайлан гаргаж дүн шинжилгээ хийсэн эсэх, хэрэв тийм бол тайлантай танилцах</h2>
+    <p class="section-subtitle">Кредит цагийн хэрэгжилт</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>Эргэн суралцах, бусад сургуулиас шилжин суралцах, иргэн статусаар суралцаад элсэж суралцах, бакалаврын зэрэгтэй хүн элсэн суралцах, харьяа ахлах сургуулиас элсэн суралцах зэрэг өмнө судалсан хичээлийг дүйцүүлэн тооцох боломжтой.</p>
+      <p>МУИС-ийн захирлын 2025 оны A/596 тоот тушаалаар батлагдсан "МУИС-д хичээл дүйцүүлэх журам"-аар зохицуулдаг. Тус журамд хичээл дүйцүүлэхэд баримтлах ерөнхий шаардлага, тооцуулах боломжтой хичээл, хязгаарлалт болон багц цагийг болон оноог шилжүүлэн тооцоолох аргачиллыг зааж өгсөн байдаг.</p>
+      <p>Мөн энэ чиглэлийн нэмэлт, нарийвчилсан тайлангуудыг сургуулийн холбогдох удирдлага, алба нэгжээс гаргуулахаар албан ёсоор хүсэлт хүргүүлээд байна.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 8 -->
+  <div class="content-section" id="section-8">
+    <div class="section-tag">Тодруулах Асуулт 8</div>
+    <h2 class="section-title">Шилжилт хөдөлгөөний судалгааны тайлантай танилцах</h2>
+    <p class="section-subtitle">Шилжилт хөдөлгөөн</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>Суралцагчийн шилжилт хөдөлгөөнийг шийдвэрлэхдээ холбогдох дүрэм, журмын дагуу суралцагчийн эрх ашигт нь нийцүүлэн шийдвэрлэдэг байна.</p>
+      <p>Тусгай шаардлага хангасан тохиолдолд МУИС-ийн хөтөлбөр хооронд, мөн гадаад дотоодын их, дээд сургуулиас шилжин суралцах боломжтой.</p>
+      <p>Шилжилт хөдөлгөөнийг хичээлийн жилд 2 удаа зохион байгуулах бөгөөд шилжилтийн бүртгэлийг намрын улиралд 7-р сарын 01-ээс 8-р сарын 10, хаврын улиралд 12-р сарын 10-аас 01-р сарын 10-ыг дуустал <strong>https://burtgel.num.edu.mn</strong> бүртгэлийн нэгдсэн системээр бүртгэнэ.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 9 -->
+  <div class="content-section" id="section-9">
+    <div class="section-tag">Тодруулах Асуулт 9</div>
+    <h2 class="section-title">Төгсөлтийн тушаал</h2>
+    <p class="section-subtitle">Төгсөлтийн тушаал</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>Сүүлийн 3 жилийн төгсөлтийн тушаалыг хавсаргав.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 10 -->
+  <div class="content-section" id="section-10">
+    <div class="section-tag">Тодруулах Асуулт 10</div>
+    <h2 class="section-title">Төгсөлтийн баримт бичгийн хуулбарыг архивлах журам, заавартай танилцах</h2>
+    <p class="section-subtitle">Төгсөлтийн баримт бичгийн журам, заавар</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС сургалтын хэвийн үйл ажиллагааг хангах зорилгоор холбогдох нэгжүүдийн уялдаа холбоо, хамтын ажиллагаа, хариуцлагыг тодорхойлсон дүрэм, журам, заавартай.</p>
+      <p>МУИС-ийн Сургалтын үйл ажиллагааны журам дэх 3.2.1.6. заалтын дагуу төгсөлтийн баримт бичгийн хуулбарыг архивлахтай холбоотой журам, заавар батлагдан мөрдөгдөж байна.</p>
+      <p>Үүнээс гадна МУИС сиси системд төгсөгч болон оюутны бүх мэдээлэл хадгалагдаж байдаг болно.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 11 -->
+  <div class="content-section" id="section-11">
+    <div class="section-tag">Тодруулах Асуулт 11</div>
+    <h2 class="section-title">Төгсөлтийн баримт бичгийг нөхөн олгох болон лавлагаа өгөх журам, заавар харах</h2>
+    <p class="section-subtitle">Төгсөлтийн баримт бичгийг нөхөн олгох</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС нь суралцагчдад олгох албан бичиг баримт, лавлагаатай холбоотой үйл ажиллагааг тодорхой журам, зааврын дагуу зохион байгуулдаг. Үүнд суралцагчийн үнэмлэх олгох, гээсэн тохиолдолд нөхөн олгох, төрөл бүрийн лавлагаа, тодорхойлолтыг тогтоосон хугацаанд гаргах, мөн диплом болон төгсөлтийн баримт бичгийг нөхөн олгох үйл явц багтана.</p>
+      <p>Иймд төгсөлтийн баримт бичгийг нөхөн олгох болон холбогдох лавлагаа, тодорхойлолт авахтай холбоотой журам, заавар МУИС-ийн Сургалтын үйл ажиллагааны журам дэх 7.1. зүйлийн дагуу мөрдөгдөж байна.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 12 -->
+  <div class="content-section" id="section-12">
+    <div class="section-tag">Тодруулах Асуулт 12</div>
+    <h2 class="section-title">Төгсөлтийн баримт бичгийн баяжилт, албажуулалт нь олон улсын жишигт нийцсэн эсэх талаарх нотолгоо, баримттай танилцах</h2>
+    <p class="section-subtitle">Төгсөлтийн баримт бичгийн стандарт</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС-ийн төгсөлтийн баримт бичгийн баяжилт, албажуулалт нь олон улсын жишигт нийцэж буйг дараах баримтаар нотолж болно. МУИС-ийн сургалтын үйл ажиллагааны журам дагуу дипломын хавсралт (diploma supplement)-ыг суралцагчид олгодог.</p>
+      <p>Түүнчлэн диплом болон дипломын хавсралтыг олгох, нөхөн олгох, хэвлэх, албажуулахдаа батлагдсан загвар ашиглаж, эрх бүхий албан тушаалтнаар гарын үсэг зуруулж, МУИС-ийн албан тамгаар баталгаажуулдаг бөгөөд энэ нь баримт бичгийн албажуулалт, стандартчиллыг хангаж байгааг илтгэнэ.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 13 -->
+  <div class="content-section" id="section-13">
+    <div class="section-tag">Тодруулах Асуулт 13</div>
+    <h2 class="section-title">Hemis, E-Mongolia, Blockchain-нд байрлуулсан дүрэм журам</h2>
+    <p class="section-subtitle">Hemis, E-Mongolia, Blockchain-нд байршуулсан дүрэм журам</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС нь нэгдсэн байдлаар HEMIS системд мэдээллийг байршуулж, шинэчлэх ажлыг зохион байгуулдаг. МУИС-д мөрдөгдөж буй дүрэм, журам нь олон нийтэд нээлттэй бөгөөд <strong>https://www.num.edu.mn/regulations/</strong> цахим хаягт байршуулсан ба тогтмол шинэчлэгддэг.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 14 -->
+  <div class="content-section" id="section-14">
+    <div class="section-tag">Тодруулах Асуулт 14</div>
+    <h2 class="section-title">Хамтын ажиллагааны гэрээ, санамж бичигтэй танилцах</h2>
+    <p class="section-subtitle">Хамтын ажиллагааны гэрээ, санамж бичиг</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>2025 оны байдлаар МУИС-д хийсэн гадаад хамтын ажиллагааны гэрээ, санамж бичгийн жагсаалтыг хавсаргав. Мөн МУИС-ийн Хамтын ажиллагааны алба тогтмол үйл ажиллагаа явуулж, гадаад, дотоод хамтын ажиллагааны ажлуудыг жил бүрийн тайланд багтаан танилцуулдаг.</p>
+      <p>Дээрхээс гадна МТЭС болон МКУТ-д хэрэгжиж буй хамтын ажиллагааны мэдээлэл болон МУИС-ийн хэмжээнд байгуулсан санамж бичгүүдийг тэнхимийн "Хамтын ажиллагаа" хавтасад байршуулсан болно.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 15 -->
+  <div class="content-section" id="section-15">
+    <div class="section-tag">Тодруулах Асуулт 15</div>
+    <h2 class="section-title">Хамтын ажиллагааны гэрээ, санамж бичгийн хүрээнд хийсэн ажлын тайлан үзэх</h2>
+    <p class="section-subtitle">Хамтын ажиллагааны гэрээ, санамж бичгийн хүрээнд хийсэн ажил</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС-ийн Хамтын ажиллагааны алба тогтмол үйл ажиллагаа явуулж, гадаад болон дотоод хамтын ажиллагааны ажлуудыг жил бүрийн тайланд багтаан танилцуулдаг. Үүний жишээ нь МУИС-ийн 2023–2024 оны тайлан-ын 6 дугаар бүлэгт гадаад, дотоод хамтын ажиллагааг танилцуулсан хэсэг юм.</p>
+      <p>Мөн МТЭС болон МКУТ-д хэрэгжиж буй хамтын ажиллагааны мэдээлэл нь жил бүрийн тэнхимийн тайланд багтдаг.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 16 -->
+  <div class="content-section" id="section-16">
+    <div class="section-tag">Тодруулах Асуулт 16</div>
+    <h2 class="section-title">Хамтын ажиллагааны гэрээ сунгасан болон хаасан шийдвэрийн тушаал</h2>
+    <p class="section-subtitle">Хамтын ажиллагааны гэрээ сунгасан болон хаасан шийдвэрийн тушаал</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС-ийн Хамтын ажиллагааны алба тогтмол үйл ажиллагаа явуулж, гадаад болон дотоод хамтын ажиллагааны ажлуудыг жил бүрийн тайланд багтаан танилцуулдаг. Үүний жишээ нь МУИС-ийн 2023–2024 оны тайлан-ын 6 дугаар бүлэгт гадаад, дотоод хамтын ажиллагааг танилцуулсан хэсэг юм.</p>
+      <p>Мөн МТЭС болон МКУТ-д хэрэгжиж буй хамтын ажиллагааны мэдээлэл нь жил бүрийн тэнхимийн тайланд багтдаг бөгөөд энэхүү жишээ бүхий мэдээллийг хавсаргасан болно.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 17 -->
+  <div class="content-section" id="section-17">
+    <div class="section-tag">Тодруулах Асуулт 17</div>
+    <h2 class="section-title">Багш болон оюутан солилцох журам түүний хэрэгжилт, өөрчлөлт</h2>
+    <p class="section-subtitle">Багш болон оюутан солилцох журам</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС-ийн сургалтын үйл ажиллагааны журамд багш, оюутан солилцооны талаар тусгасан. Энэхүү журмын дагуу багш, оюутан солилцооны үйл ажиллагаа явагддаг бөгөөд тухайн жилийнхээ ажлын тайланд багтаан танилцуулдаг.</p>
+    </div>
+  </div>
+
+  <!-- Section 18 -->
+  <div class="content-section" id="section-18">
+    <div class="section-tag">Тодруулах Асуулт 18</div>
+    <h2 class="section-title">Төгсөгчдийн холбооны үйл ажиллагааг зохицуулах журам болон үйл ажиллагааны төлөвлөгөө, тайлан үзэх</h2>
+    <p class="section-subtitle">Төгсөгчдийн холбооны үйл ажиллагаа</p>
+    <div class="explanation-label">Магадлан Итгэмжлэлийн Тайлбар (Detailed Explanation)</div>
+    <div class="explanation-block">
+      <p>МУИС-ийн Оюутны хөгжлийн төв нь МУИС-ийн хэмжээнд төгсөгчдийн ажил эрхлэлтийн мөшгөх судалгааг эрхэлдэг бөгөөд жил бүрийн тайлан нь тус албаны болон МУИС-ийн тайланд тусгагддаг.</p>
+      <p>Мөн МУИС төгсөгчдийн холбоо нь 2022-2023 онд үйл ажиллагааг эрхэлж байсан боловч тус байгууллага нь үйл ажиллагаагаа зогсоосон гэх мэдээлэлтэй байна. Цахим хуудас: <strong>https://www.facebook.com/alumniNUM/</strong></p>
+      <p><strong>Нөхөн олголтын шаардлага:</strong> Нөхөн олголт хийхэд оюутны хувийн мэдээлэл, төгсөлтийн тушаалын дугаар, албан ёсны хуулбарын тодорхойлолт зэрэг баримтуудыг бүрдүүлэх шаардлагатай.</p>
+    </div>
+    <div class="explanation-label">Нотолгоо баримт (Evidence Documents)</div>
+    <div class="file-list">
+      <a class="file-item" href="YOUR_FILE_LINK" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Шалгуур 3 formatted.docx</div><div class="file-meta">DOCX • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+      <a class="file-item" href="YOUR_FILE_LINK_2" target="_blank">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div>
+        <div class="file-info"><div class="file-name">Enrollment_data.pdf</div><div class="file-meta">PDF • Татах боломжтой</div></div>
+        <div class="file-download">↓</div>
+      </a>
+    </div>
+  </div>
+
+</div><!-- #main -->
+</div><!-- #app -->
+
+<script>
+  function showSection(num, el) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('section-' + num).classList.add('active');
+    el.classList.add('active');
+    document.getElementById('main').scrollTop = 0;
+  }
+</script>
+</body>
+</html>
