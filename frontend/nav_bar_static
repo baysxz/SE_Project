@@ -1,0 +1,82 @@
+<!-- Sidebar heseg-->
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>МУИС – МТЭС – МКУТ – КУ МАГАДЛАН ИТГЭМЖЛЭЛ</h1>
+    <p>Шалгуур 3. Сургалтын үйл ажиллагаа: тодруулах асуулууд</p>
+  </div>
+  <nav id="sidebar-nav">
+    <div class="nav-item active" onclick="showSection(1, this)">
+      <span class="nav-num">1</span>
+      <span class="nav-label">Элсэлтийн бодлогын дүн шинжилгээ</span>
+    </div>
+    <div class="nav-item" onclick="showSection(2, this)">
+      <span class="nav-num">2</span>
+      <span class="nav-label">Элсэлтийн бодлогын хурлын протокол</span>
+    </div>
+    <div class="nav-item" onclick="showSection(3, this)">
+      <span class="nav-num">3</span>
+      <span class="nav-label">Оюутны хөгжлийн хөтөлбөр, санхүүжилт</span>
+    </div>
+    <div class="nav-item" onclick="showSection(4, this)">
+      <span class="nav-num">4</span>
+      <span class="nav-label">Оюутны хөдөлмөр эрхлэлт, зуучлал</span>
+    </div>
+    <div class="nav-item" onclick="showSection(5, this)">
+      <span class="nav-num">5</span>
+      <span class="nav-label">Оюутны эрдэм шинжилгээний ажлын санхүүжилт</span>
+    </div>
+    <div class="nav-item" onclick="showSection(6, this)">
+      <span class="nav-num">6</span>
+      <span class="nav-label">Зээл, тэтгэлэг олголтын дүн шинжилгээ</span>
+    </div>
+    <div class="nav-item" onclick="showSection(7, this)">
+      <span class="nav-num">7</span>
+      <span class="nav-label">Багц цагийн дүйцүүлэлт, хэрэгжилтийн тайлан</span>
+    </div>
+    <div class="nav-item" onclick="showSection(8, this)">
+      <span class="nav-num">8</span>
+      <span class="nav-label">Шилжилт хөдөлгөөн</span>
+    </div>
+    <div class="nav-item" onclick="showSection(9, this)">
+      <span class="nav-num">9</span>
+      <span class="nav-label">Төгсөлтийн тушаал</span>
+    </div>
+    <div class="nav-item" onclick="showSection(10, this)">
+      <span class="nav-num">10</span>
+      <span class="nav-label">Төгсөлтийн баримт бичгийн журам, заавар</span>
+    </div>
+    <div class="nav-item" onclick="showSection(11, this)">
+      <span class="nav-num">11</span>
+      <span class="nav-label">Төгсөлтийн баримт бичгийг нөхөн олгох</span>
+    </div>
+    <div class="nav-item" onclick="showSection(12, this)">
+      <span class="nav-num">12</span>
+      <span class="nav-label">Төгсөлтийн баримт бичгийн стандарт</span>
+    </div>
+    <div class="nav-item" onclick="showSection(13, this)">
+      <span class="nav-num">13</span>
+      <span class="nav-label">Hemis, E-Mongolia, Blockchain-нд байрлуулсан дүрэм журам</span>
+    </div>
+    <div class="nav-item" onclick="showSection(14, this)">
+      <span class="nav-num">14</span>
+      <span class="nav-label">Хамтын ажиллагааны гэрээ, санамж бичиг</span>
+    </div>
+    <div class="nav-item" onclick="showSection(15, this)">
+      <span class="nav-num">15</span>
+      <span class="nav-label">Хамтын ажиллагааны гэрээ, санамж бичгийн хүрээнд хийсэн ажил</span>
+    </div>
+    <div class="nav-item" onclick="showSection(16, this)">
+      <span class="nav-num">16</span>
+      <span class="nav-label">Хамтын ажиллагааны гэрээ сунгасан болон хаасан шйидвэрийн тушаал</span>
+    </div>
+    <div class="nav-item" onclick="showSection(17, this)">
+      <span class="nav-num">17</span>
+      <span class="nav-label">Багш болон оюутан солилцох журам</span>
+    </div>
+    <div class="nav-item" onclick="showSection(18, this)">
+      <span class="nav-num">18</span>
+      <span class="nav-label">Төгсөгчдийн холбооны үйл ажиллагаа</span>
+    </div>
+  </nav>
+</div>
+
