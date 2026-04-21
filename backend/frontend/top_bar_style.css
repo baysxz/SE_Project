@@ -1,0 +1,47 @@
+/* ── TOPBAR ── */
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 280px; /* same as sidebar width */
+  right: 0;
+  height: 60px;
+  background: linear-gradient(90deg, #243b6b 0%, #1a2a4a 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+#topbar h1 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+#topbar-login-btn {
+  background: #4a90d9;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#topbar-login-btn:hover {
+  background: #3578c0;
+}
+
+#admin-status {
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  margin-left: 16px;
+}
+#main {
+  margin-top: 60px; /* same as topbar height */
+}

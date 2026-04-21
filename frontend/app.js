@@ -1,18 +1,16 @@
-fetch("http://localhost:5001/items")
-  .then(res => res.json())
-  .then(data => {
+fetch("http://localhost:5001/users")
+  .then((res) => res.json())
+  .then((data) => {
+    console.log(data);
+
     const container = document.getElementById("list");
 
-    data.forEach(item => {
+    data.forEach((s) => {
       const div = document.createElement("div");
-      div.className = "card";
-
       div.innerHTML = `
-        <div class="title">${item.title}</div>
-        <div>${item.description}</div>
+        <h3>${s.name}</h3>
+        <p>${s.email}</p>
       `;
-
       container.appendChild(div);
     });
-  })
-  .catch(err => console.log("Error:", err));
+  });
