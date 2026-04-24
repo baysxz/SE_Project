@@ -12,3 +12,5 @@ venv/
 
 # Docker
 *.env
+
+.DS_Store
